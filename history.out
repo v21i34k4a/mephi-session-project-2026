@@ -1,0 +1,262 @@
+    1  findmnt /
+    2  lsblk
+    3  clear
+    4  id user1
+    5  geten passwd 1234
+    6  clear
+    7  sudo groupadd students
+    8  sudo useradd -m -u 1234 -G students user1
+    9  sudo passwd user1
+   10  sudo chage -M 90 user1
+   11  id user1
+   12  sudo chage -l user1
+   13  sudo find / -type f -perm -4000 2>/dev/null
+   14  sudo find / -type f -perm -4000 2>/dev/null | tee ~/setuid-files.out
+   15  cat ~/setuid-files.out
+   16  ps -eo pid,ruid,euid,comm | awk '$2 >= 1000 && $2 != 65534 && $3 == 0'
+   17  ps -eo pid,ruid,euid,comm | awk 'NR==1 || ($2 >= 1000 && $2 != 65534 && $3 == 0)' > ~/processes.out
+   18  sudo sh -c 'echo "MEPHI SETUID TEST" > /root/secret.txt'
+   19  sudo chmod 600 /root/secret.txt
+   20  sudo ls -l /root/secret.txt
+   21  su - user1
+   22  sudo cp /usr/bin/cat /home/user1/cat-suid
+   23  sudo chown root:root /home/user1/cat-suid
+   24  sudo chmod 4755 /home/user1/cat-suid
+   25  ls -l /home/user1/cat-suid
+   26  sudo ls -l /home/user1/cat-suid
+   27  su - user1
+   28  sudo stat /home/user1/cat-suid >> ~/stat.out
+   29  cat ~/stat.out
+   30  sudo stat /home/user1/cat-suid >> ~/stat.out
+   31  cat ~/stat.out
+   32  sudo stat /home/user1 > ~/stat.out
+   33  sudo stat /home/user1/cat-suid >> ~/stat.out
+   34  cat ~/stat.out
+   35  exit
+   36  cat /etc/os-release
+   37  ip a
+   38  nmcli connection show
+   39  hostnamectl
+   40  sudo hostnamectl set-hostname mephi-2026.domain.local
+   41  hostnamectl | tee ~/mephi-evidence/hostname.out
+   42  nmcli -g ipv4.method connection show "Wired connection 1" | tee ~/mephi-evidence/dhcp.out
+   43  ping -c 4 8.8.8.8 2>&1 | tee ~/ping.out
+   44  ls -lh ~/mephi-evidence/ ~/ping.out
+   45  ip -4 route | tee ~/mephi-evidence/routes.out
+   46  nmcli -f GENERAL.STATE,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS device show enp0s1 | tee ~/mephi-evidence/network.out
+   47  getent hosts example.com | tee ~/mephi-evidence/dns.out
+   48  curl -I --connect-timeout 5 --max-time 12 https://example.com 2>&1 | tee ~/mephi-evidence/https.out
+   49  curl -4 -I --connect-timeout 5 --max-time 12 https://example.com 2>&1 | tee ~/mephi-evidence/https-ipv4.out
+   50  ping -c 4 192.168.64.1 2>&1 | tee ~/mephi-evidence/gateway-ping.out
+   51  sudo dnf repolist --enabled 2>&1 | tee ~/mephi-evidence/repositories.out
+   52  sudo dnf makecache --refresh 2>&1 | tee ~/mephi-evidence/dnf-makecache.out
+   53  set -o pipefail
+   54  sudo dnf --disablerepo=rpmfusion-nonfree-nvidia-driver makecache --refresh 2>&1 | tee ~/mephi-evidence/dnf-cache-fixed.out
+   55  sudo dnf --disablerepo=rpmfusion-nonfree-nvidia-driver list nginx libcap-ng-utils tcpdump 2>&1 | tee ~/mephi-evidence/packages.out
+   56  sudo dnf --disablerepo=rpmfusion-nonfree-nvidia-driver upgrade --refresh -y 2>&1 | tee ~/mephi-evidence/upgrade.out
+   57  echo "Код завершения: $?"
+   58  sudo dnf history | tee ~/dnf.out
+   59  sudo dnf --disablerepo=rpmfusion-nonfree-nvidia-driver install -y nginx libcap-ng-utils 2>&1 | tee ~/mephi-evidence/install-packages.out
+   60  rpm -q nginx libcap-ng-utils tcpdump | tee ~/mephi-evidence/installed-packages.out
+   61  sudo dnf history | tee ~/dnf.out
+   62  sudo dnf history info 4 > ~/mephi-evidence/dnf-upgrade-details.out 2>&1
+   63  tail -n 30 ~/mephi-evidence/dnf-upgrade-details.out
+   64  sudo systemctl daemon-reload 2>&1 | tee ~/mephi-evidence/systemd-reload.out
+   65  dnf --disablerepo=rpmfusion-nonfree-nvidia-driver download --destdir=/tmp tcpdump 2>&1 | tee ~/mephi-evidence/tcpdump-download.out
+   66  ls -lh /tmp/tcpdump-*.rpm | tee ~/mephi-evidence/tcpdump-rpm.out
+   67  rpm -K /tmp/tcpdump-*.rpm
+   68  sudo rpm -Uvh --replacepkgs /tmp/tcpdump-4.99.4-2.fc38.aarch64.rpm 2>&1 | tee ~/mephi-evidence/tcpdump-install.out
+   69  rpm -q tcpdump | tee ~/mephi-evidence/tcpdump-check.out
+   70  sudo dnf history | tee ~/dnf.out
+   71  lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS | tee ~/mephi-evidence/disks-before.out
+   72  findmnt / | tee ~/mephi-evidence/root-filesystem.out
+   73  history > ~/mephi-evidence/history-checkpoint.out
+   74  exit
+   75  mkdir -p ~/mephi-evidence
+   76  script -a -f ~/mephi-evidence/terminal.log
+   77  clear
+   78  mkdir -p ~/mephi-evidence
+   79  script -a -f ~/mephi-evidence/terminal.log
+   80  sudo poweroff
+   81  lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS | tee ~/mephi-evidence/disks-after.out
+   82  command -v parted
+   83  set -o pipefail
+   84  sudo parted -s /dev/vdb mklabel gpt mkpart primary ext4 1MiB 100% 2>&1 | tee ~/mephi-evidence/partition-create.out
+   85  sudo partprobe /dev/vdb
+   86  lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS | tee ~/mephi-evidence/partitions.out
+   87  sudo mkfs.ext4 -L MEPHI_WEB /dev/vdb1 2>&1 | tee ~/mephi-evidence/mkfs-ext4.out
+   88  lsblk -f | tee ~/mephi-evidence/filesystem-check.out
+   89  sudo blkid /dev/vdb1 | tee ~/mephi-evidence/blkid.out
+   90  sudo mkdir -p /mephi-web
+   91  ls -ld /mephi-web | tee ~/mephi-evidence/mount-directory.out
+   92  sudo cp -a /etc/fstab /etc/fstab.before-mephi
+   93  grep -nE 'MEPHI_WEB|/mephi-web' /etc/fstab
+   94  printf '%s\n' 'LABEL=MEPHI_WEB /mephi-web ext4 defaults 0 2' | sudo tee -a /etc/fstab
+   95  sudo findmnt --verify --verbose 2>&1 | tee ~/mephi-evidence/fstab-check.out
+   96  sudo systemctl daemon-reload
+   97  sudo mount /mephi-web 2>&1 | tee ~/mephi-evidence/mount-result.out
+   98  findmnt /mephi-web | tee ~/mephi-evidence/mount-check.out
+   99  cp /etc/fstab ~/mephi-evidence/fstab
+  100  history > ~/mephi-evidence/history-before-reboot.out
+  101  exit
+  102  script -a -f ~/mephi-evidence/terminal.log
+  103  sudo reboot
+  104  findmnt /mephi-web | tee ~/mephi-evidence/mount-after-reboot.out
+  105  lsblk -f | tee ~/mephi-evidence/disks-after-reboot.out
+  106  systemctl is-enabled gdm
+  107  systemctl is-active nginx | tee ~/mephi-evidence/nginx-active.out
+  108  sudo systemctl enable --now nginx 2>&1 | tee ~/mephi-evidence/nginx-enable.out
+  109  systemctl is-active nginx | tee ~/mephi-evidence/nginx-active.out
+  110  systemctl is-enabled nginx | tee ~/mephi-evidence/nginx-enabled.out
+  111  sudo journalctl -u nginx -b --no-pager 2>&1 | tee ~/journalctl.out
+  112  curl -i http://localhost/ 2>&1 | tee ~/mephi-evidence/nginx-initial-http.out
+  113  ls -lh ~/journalctl.out ~/mephi-evidence/nginx-*.out
+  114  getent passwd user1 user2 user3 curator1 curator2 5501 5502 5503 | tee ~/mephi-evidence/users-before.out
+  115  getent group curators mephi_devs 4444 | tee ~/mephi-evidence/groups-before.out
+  116  command -v setfacl
+  117  command -v getfacl
+  118  sudo passwd user1
+  119  id user1 | tee ~/mephi-evidence/user1-before-fix.out
+  120  getent passwd 5501 | tee ~/mephi-evidence/uid-5501-check.out
+  121  ps -u user1 -o pid,comm | tee ~/mephi-evidence/user1-processes.out
+  122  sudo usermod -u 5501 user1 2>&1 | tee ~/mephi-evidence/user1-change-uid.out
+  123  id user1 | tee ~/mephi-evidence/user1-after-fix.out
+  124  set -o pipefail
+  125  sudo groupadd mephi_devs 2>&1 | tee ~/mephi-evidence/group-developers.out
+  126  sudo groupadd -g 4444 curators 2>&1 | tee ~/mephi-evidence/group-curators.out
+  127  sudo useradd -m -u 5502 -G mephi_devs user2
+  128  sudo useradd -m -u 5503 -G mephi_devs user3
+  129  sudo usermod -aG mephi_devs user1
+  130  id user1
+  131  id user2
+  132  id user3
+  133  getent group curators
+  134  { id user1; id user2; id user3; getent group mephi_devs curators; } | tee ~/mephi-evidence/users-groups.out
+  135  sudo useradd -m -g curators -s /bin/bash curator1 2>&1 | tee ~/mephi-evidence/curator1-create.out
+  136  sudo useradd -m -g curators -s /bin/bash curator2 2>&1 | tee ~/mephi-evidence/curator2-create.out
+  137  id curator1
+  138  id curator2
+  139  { id user1; id user2; id user3; id curator1; id curator2; getent group mephi_devs curators; } | tee ~/mephi-evidence/all-users-groups.out
+  140  ls -ld /data /data/mephi-2026 2>&1 | tee ~/mephi-evidence/data-before.out
+  141  sudo mkdir -p /data/mephi-2026
+  142  sudo chown root:root /data
+  143  sudo chmod 711 /data
+  144  sudo chown root:mephi_devs /data/mephi-2026
+  145  sudo chmod 2770 /data/mephi-2026
+  146  sudo setfacl -m g:curators:rx,m::rwx,o::--- /data/mephi-2026
+  147  sudo setfacl -d -m u::rwx,g::rwx,g:curators:rx,m::rwx,o::--- /data/mephi-2026
+  148  getfacl -p /data/mephi-2026 | tee ~/mephi-evidence/project-acl.out
+  149  stat /data/mephi-2026 | tee ~/stat.out
+  150  sudo -u user1 sh -c 'echo "Created by user1" > /data/mephi-2026/test.txt'
+  151  sudo -u user2 sh -c 'echo "Edited by user2" >> /data/mephi-2026/test.txt'
+  152  sudo -u user3 sh -c 'echo "Edited by user3" >> /data/mephi-2026/test.txt'
+  153  cat /data/mephi-2026/test.txt | tee ~/mephi-evidence/acl-test.txt
+  154  sudo -u user1 cat /data/mephi-2026/test.txt 2>&1 | tee ~/mephi-evidence/acl-test.txt
+  155  sudo getfacl -p /data/mephi-2026/test.txt | tee ~/mephi-evidence/test-file-acl.out
+  156  sudo -u curator1 cat /data/mephi-2026/test.txt 2>&1 | tee ~/mephi-evidence/curator-read.out
+  157  sudo -u curator2 cat /data/mephi-2026/test.txt 2>&1 | tee ~/mephi-evidence/curator2-read.out
+  158  sudo -u curator1 sh -c 'echo forbidden >> /data/mephi-2026/test.txt' 2>&1 | tee ~/mephi-evidence/curator-write-denied.out
+  159  sudo -u nobody cat /data/mephi-2026/test.txt 2>&1 | tee ~/mephi-evidence/outsider-denied.out
+  160  sudo -u user1 cat /data/mephi-2026/test.txt 2>&1 | tee ~/mephi-evidence/acl-final-check.out
+  161  ls -l /usr/sbin/tcpdump | tee ~/mephi-evidence/tcpdump-permissions-before.out
+  162  getcap /usr/sbin/tcpdump | tee ~/mephi-evidence/tcpdump-capabilities-before.out
+  163  command -v setcap
+  164  getenforce | tee ~/getenforce.out
+  165  sudo setcap cap_net_raw,cap_net_admin=ep /usr/sbin/tcpdump
+  166  getcap /usr/sbin/tcpdump | tee ~/getcap.out
+  167  sudo -u user1 sh -c '
+timeout 10 /usr/sbin/tcpdump -p -i lo -nn -c 1 icmp &
+pid=$!
+sleep 1
+ping -c 1 127.0.0.1 >/dev/null
+wait "$pid"
+' 2>&1 | tee ~/mephi-evidence/tcpdump-user1-test.out
+  168  ls -l /usr/sbin/tcpdump | tee ~/mephi-evidence/tcpdump-permissions-after.out
+  169  command -v semanage
+  170  command -v restorecon
+  171  ls -ldZ /mephi-web | tee ~/mephi-evidence/selinux-before.out
+  172  sudo semanage fcontext -a -t httpd_sys_content_t '/mephi-web(/.*)?'
+  173  sudo restorecon -Rv /mephi-web | tee ~/mephi-evidence/selinux-restorecon.out
+  174  ls -ldZ /mephi-web | tee ~/mephi-evidence/selinux-after.out
+  175  sudo nginx -T 2>&1 | grep -nE '^[[:space:]]*(root|listen|index|include)[[:space:]]' | tee ~/mephi-evidence/nginx-config-before.out
+  176  sudo cp -a /etc/nginx/nginx.conf /etc/nginx/nginx.conf.before-mephi
+  177  sudo sed -i 's|root         /usr/share/nginx/html;|root         /mephi-web;|' /etc/nginx/nginx.conf
+  178  sudo grep -n 'root ' /etc/nginx/nginx.conf | tee ~/mephi-evidence/nginx-root.out
+  179  read -r -p "Введите номер зачётной книжки: " STUDENT_NUMBER
+  180  sudo test -f /etc/nginx/nginx.conf.before-mephi || sudo cp -a /etc/nginx/nginx.conf /etc/nginx/nginx.conf.before-mephi
+  181  sudo sed -i 's|root         /usr/share/nginx/html;|root         /mephi-web;|' /etc/nginx/nginx.conf
+  182  sudo grep -n 'root ' /etc/nginx/nginx.conf | tee ~/mephi-evidence/nginx-root.out
+  183  sudo nginx -t 2>&1 | tee ~/mephi-evidence/nginx-config-test.out
+  184  sudo systemctl reload nginx
+  185  getenforce | tee ~/getenforce.out
+  186  ls -ldZ /mephi-web | tee ~/mephi-evidence/selinux-final.out
+  187  sudo cat /etc/pam.d/login | tee ~/mephi-evidence/pam-login-before.out
+  188  sudo grep -vE '^[[:space:]]*(#|$)' /etc/security/access.conf | tee ~/mephi-evidence/access-before.out
+  189  grep -E '^PASS_(MAX|MIN|WARN)_DAYS' /etc/login.defs | tee ~/mephi-evidence/password-policy-before.out
+  190  sudo grep -nE '^[[:space:]]*minlen' /etc/security/pwquality.conf | tee ~/mephi-evidence/pwquality-before.out
+  191  grep -n 'pam_pwquality' /etc/pam.d/system-auth
+  192  sudo cp -a /etc/pam.d/login /etc/pam.d/login.before-mephi
+  193  sudo cp -a /etc/security/access.conf /etc/security/access.conf.before-mephi
+  194  printf '%s\n' '-:curator1 curator2:LOCAL' | sudo tee -a /etc/security/access.conf
+  195  printf '%s\n' '+:ALL:ALL' | sudo tee -a /etc/security/access.conf
+  196  sudo sed -i '/^account[[:space:]]*required[[:space:]]*pam_nologin\.so/a account    required     pam_access.so' /etc/pam.d/login
+  197  grep -n 'pam_access' /etc/pam.d/login | tee ~/mephi-evidence/pam-access-after.out
+  198  sudo grep -E '^[+-]:' /etc/security/access.conf | tee ~/mephi-evidence/access-after.out
+  199  sudo cp -a /etc/login.defs /etc/login.defs.before-mephi
+  200  sudo cp -a /etc/security/pwquality.conf /etc/security/pwquality.conf.before-mephi
+  201  sudo sed -i 's/^PASS_MAX_DAYS[[:space:]].*/PASS_MAX_DAYS 90/' /etc/login.defs
+  202  grep '^PASS_MAX_DAYS' /etc/login.defs | tee ~/mephi-evidence/password-max-days.out
+  203  printf '\nminlen = 12\n' | sudo tee -a /etc/security/pwquality.conf
+  204  sudo chage -l fedora | tee ~/mephi-evidence/fedora-password-age-before.out
+  205  sudo chage -l user1 | tee ~/mephi-evidence/user1-password-age-before.out
+  206  sudo passwd fedora
+  207  sudo chage -M 90 fedora
+  208  sudo chage -l fedora | tee ~/mephi-evidence/fedora-password-age-after.out
+  209  sudo grep -nE '^[[:space:]]*minlen[[:space:]]*=' /etc/security/pwquality.conf | tee ~/mephi-evidence/password-minlen.out
+  210  passwd
+  211  sudo -k
+  212  sudo -v
+  213  sudo chage -l fedora | tee ~/mephi-evidence/fedora-password-final.out
+  214  for u in fedora user1 user2 user3 curator1 curator2; do     sudo chage -M 90 "$u"; done
+  215  printf '%s\n' 'dcredit = 0' 'ucredit = 0' 'lcredit = 0' 'ocredit = 0' | sudo tee -a /etc/security/pwquality.conf
+  216  sudo passwd user2
+  217  sudo passwd user1
+  218  sudo passwd user2
+  219  sudo passwd user3
+  220  sudo passwd curator1
+  221  sudo passwd curator2
+  222  for u in fedora user1 user2 user3 curator1 curator2; do     sudo chage -M 90 "$u"; done
+  223  for u in fedora user1 user2 user3 curator1 curator2; do     echo "===== $u =====";     sudo passwd -S "$u"; done | tee ~/mephi-evidence/password-status.out
+  224  for u in fedora user1 user2 user3 curator1 curator2; do     echo "===== $u =====";     sudo chage -l "$u" | grep -E 'Last password change|Password expires|Maximum number'; done | tee ~/mephi-evidence/password-policy-final.out
+  225  grep -E '^[[:space:]]*(minlen|dcredit|ucredit|lcredit|ocredit)[[:space:]]*=' /etc/security/pwquality.conf | tee ~/mephi-evidence/pwquality-final.out
+  226  sudo grep -E '^[+-]:' /etc/security/access.conf | tee ~/mephi-evidence/access-final.out
+  227  read -r -p "Введите бухгалтерский шифр: " STUDENT_NUMBER
+  228  printf 'Hello from Student: %s\n' "$STUDENT_NUMBER" | sudo tee /mephi-web/index.html
+  229  unset STUDENT_NUMBER
+  230  sudo chmod 644 /mephi-web/index.html
+  231  sudo restorecon -v /mephi-web/index.html
+  232  sudo nginx -t
+  233  sudo systemctl reload nginx
+  234  curl -fsS http://localhost/ | tee ~/curl.out
+  235  sudo dnf --disablerepo=rpmfusion-nonfree-nvidia-driver install -y pamtester
+  236  for u in curator1 curator2 fedora user1; do     echo "===== $u =====";     sudo pamtester -I tty=tty1 login "$u" acct_mgmt 2>&1;     echo "Код: $?"; done | tee ~/mephi-evidence/pam-console-test.out
+  237  getent hosts mirrors.fedoraproject.org | tee ~/mephi-evidence/dns-check.out
+  238  curl -4 -I --connect-timeout 5 --max-time 12 https://example.com 2>&1 | tee ~/mephi-evidence/internet-check.out
+  239  nmcli -f GENERAL.STATE,IP4.GATEWAY,IP4.DNS device show enp0s1 | tee ~/mephi-evidence/network-check.out
+  240  sudo systemctl enable --now NetworkManager 2>&1 | tee ~/mephi-evidence/networkmanager-start.out
+  241  systemctl is-active NetworkManager
+  242  nmcli device status | tee ~/mephi-evidence/network-restored.out
+  243  getent hosts example.com
+  244  curl -4 -I https://example.com
+  245  ping -c 4 8.8.8.8 2>&1 | tee ~/ping.out
+  246  sudo dnf --disablerepo=rpmfusion-nonfree-nvidia-driver install -y pamtester 2>&1 | tee ~/mephi-evidence/pamtester-install.out
+  247  rpm -q pamtester
+  248  for u in curator1 curator2 fedora user1; do     echo "===== $u =====";     sudo pamtester -I tty=tty1 login "$u" acct_mgmt 2>&1;     echo "Код: $?"; done | tee ~/mephi-evidence/pam-console-test.out
+  249  sudo dnf history | tee ~/dnf.out
+  250  stat /data/mephi-2026 > ~/stat.out
+  251  stat /mephi-web >> ~/stat.out
+  252  getcap /usr/sbin/tcpdump | tee ~/getcap.out
+  253  getenforce | tee ~/getenforce.out
+  254  sudo journalctl -u nginx -b --no-pager | tee ~/journalctl.out
+  255  curl -fsS http://localhost/ | tee ~/curl.out
+  256  history > ~/history.out

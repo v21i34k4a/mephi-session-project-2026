@@ -1,0 +1,8 @@
+ID     | Command line              | Date and time    | Action(s)      | Altered
+--------------------------------------------------------------------------------
+     6 | --disablerepo=rpmfusion-n | 2026-11-01 07:32 | Install        |    1  <
+     5 | --disablerepo=rpmfusion-n | 2026-11-01 05:59 | Install        |    6 > 
+     4 | --disablerepo=rpmfusion-n | 2026-11-01 05:49 | I, O, U        |  982 EE
+     3 | install vim               | 2023-10-20 21:48 | I, U           |    7   
+     2 | install spice-vdagent spi | 2023-10-20 20:23 | Install        |    1  <
+     1 |                           | 2023-04-13 14:44 | Install        | 1833 >E

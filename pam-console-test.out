@@ -1,0 +1,12 @@
+===== curator1 =====
+pamtester: Permission denied
+Код: 1
+===== curator2 =====
+pamtester: Permission denied
+Код: 1
+===== fedora =====
+pamtester: account management done.
+Код: 0
+===== user1 =====
+pamtester: account management done.
+Код: 0
